@@ -9,19 +9,22 @@ import About from './About';
 import { Switch, Route, Redirect, useParams, Link, withRouter } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { connect } from 'react-redux';
+import { addComment } from '../redux/actionCreator';
 
 const mapStateToProps = state => {
     return {
         dishes: state.dishes,
         promotions: state.promotions,
         leaders: state.leaders,
-        commments: state.comments,
+        comments: state.comments,
     }
 }
+
+const mapDisPatchToProps = (dispatch) => ({
+    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))
+});
+
 class Main extends Component {
-    constructor(props) {
-        super(props);
-    }
     render() {
         const HomePage = () => {
             return (
@@ -42,7 +45,9 @@ class Main extends Component {
                         <BreadcrumbItem ><Link to="/menu">Menu</Link></BreadcrumbItem>
                         <BreadcrumbItem active>{dish.name}</BreadcrumbItem>
                     </Breadcrumb>
-                    <DishDetail dish={dish}></DishDetail>
+                    <DishDetail dish={dish}
+                        comments={this.props.comments.filter((comment) => comment.dishId === parseInt(id, 10))}
+                        addComment={this.props.addComment}></DishDetail>
                 </>
             )
         }
@@ -57,7 +62,7 @@ class Main extends Component {
                 <Switch>
                     <div className="container">
                         <Route path="/home" component={HomePage}></Route>
-                        <Route exact path="/menu" component={() => <Menu dishes={this.state.dishes}></Menu>}></Route>
+                        <Route exact path="/menu" component={() => <Menu dishes={this.props.dishes}></Menu>}></Route>
                         <Route exact path="/contactus" component={Contact}></Route>
                         <Route path="/menu/:id" component={Detail}></Route>
                         <Route exact path="/about" component={AboutUs}></Route>
@@ -70,5 +75,5 @@ class Main extends Component {
     }
 
 }
-export default withRouter(connect(mapStateToProps)(Main));
+export default withRouter(connect(mapStateToProps, mapDisPatchToProps)(Main));
 
