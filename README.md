@@ -1,3 +1,12 @@
+This project is a single page application frontened by React.js, Redux, and Reactstrap. This is implemented as part of Front-End Web Development with React
+course to learn various aspects of a React library:
+    - client-side Javascript application development and the React library
+    - single page applications in React using REACT ROUTER
+    - React features including components and forms
+    - functional front-end web application
+    - Redux to design the architecture for a React-Redux app
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
