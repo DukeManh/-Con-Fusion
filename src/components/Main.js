@@ -9,7 +9,7 @@ import About from './About';
 import { Switch, Route, Redirect, useParams, Link, withRouter } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { connect } from 'react-redux';
-import { addComment } from '../redux/actionCreator';
+import { addComment, fetchDishes } from '../redux/actionCreator';
 
 const mapStateToProps = state => {
     return {
@@ -21,23 +21,33 @@ const mapStateToProps = state => {
 }
 
 const mapDisPatchToProps = (dispatch) => ({
-    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))
+    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),
+    fetchDishes: () => { dispatch(fetchDishes()) }
+
 });
 
 class Main extends Component {
+    constructor(props) {
+        super(props);
+    }
+    componentDidMount() {
+        this.props.fetchDishes();
+    }
     render() {
         const HomePage = () => {
             return (
                 <Home
-                    dish={this.props.dishes.filter((dish) => dish.featured)[0]}
+                    isLoading={this.props.dishes.isLoading}
+                    errMess={this.props.dishes.errMess}
+                    dish={this.props.dishes.dishes.filter(dish => dish.featured)[0]}
                     promotion={this.props.promotions.filter(promo => promo.featured)[0]}
                     leader={this.props.leaders.filter(leader => leader.featured)[0]} ></Home>
-
             )
         }
         const Detail = () => {
             let { id } = useParams();
-            var dish = this.props.dishes.filter(dish => dish.id === parseInt(id, 10))[0];
+            var dish = this.props.dishes.dishes.filter(dish => dish.id === parseInt(id, 10))[0];
+            console.log(this.props);
             return (
                 <>
                     <Breadcrumb>
@@ -62,7 +72,7 @@ class Main extends Component {
                 <Switch>
                     <div className="container">
                         <Route path="/home" component={HomePage}></Route>
-                        <Route exact path="/menu" component={() => <Menu dishes={this.props.dishes}></Menu>}></Route>
+                        <Route exact path="/menu" component={() => <Menu dishes={this.props.dishes} isLoading={this.props.isLoading} errMess={this.props.errMess}></Menu>}></Route>
                         <Route exact path="/contactus" component={Contact}></Route>
                         <Route path="/menu/:id" component={Detail}></Route>
                         <Route exact path="/about" component={AboutUs}></Route>
